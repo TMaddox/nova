@@ -900,6 +900,9 @@ class ComputeManager(manager.SchedulerDependentManager):
         try:
             image_meta = self._prebuild_instance(context, instance)
             if image_meta:
+                # Thomas Maddox - Troubleshooting image meta that's returned
+                LOG.info("*************** TEM image meta ****************")
+                LOG.info(image_meta)
                 extra_usage_info = {"image_name": image_meta['name']}
 
             notify("start")  # notify that build is starting
