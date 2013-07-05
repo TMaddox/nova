@@ -70,7 +70,7 @@ def send_api_fault(url, status, exception):
                         payload)
 
 
-def send_update(context, old_instance, new_instance, service=None, host=None):
+def send_update(context, old_instance, new_instance, service=None, host=None, progress=None):
     """Send compute.instance.update notification to report any changes occurred
     in that instance
     """
@@ -102,7 +102,7 @@ def send_update(context, old_instance, new_instance, service=None, host=None):
         # value of verify_states need not be True as the check for states is
         # already done here
         send_update_with_states(context, new_instance, old_vm_state,
-                new_vm_state, old_task_state, new_task_state, service, host)
+                new_vm_state, old_task_state, new_task_state, service, host, progress=progress)
 
     else:
         try:
@@ -111,7 +111,7 @@ def send_update(context, old_instance, new_instance, service=None, host=None):
                 old_display_name = old_instance["display_name"]
             _send_instance_update_notification(context, new_instance,
                     service=service, host=host,
-                    old_display_name=old_display_name)
+                    old_display_name=old_display_name, progress=progress)
         except Exception:
             LOG.exception(_("Failed to send state update notification"),
                     instance=new_instance)
@@ -119,7 +119,7 @@ def send_update(context, old_instance, new_instance, service=None, host=None):
 
 def send_update_with_states(context, instance, old_vm_state, new_vm_state,
         old_task_state, new_task_state, service="compute", host=None,
-        verify_states=False):
+        verify_states=False, progress=None):
     """Send compute.instance.update notification to report changes if there
     are any, in the instance
     """
@@ -151,7 +151,7 @@ def send_update_with_states(context, instance, old_vm_state, new_vm_state,
             _send_instance_update_notification(context, instance,
                     old_vm_state=old_vm_state, old_task_state=old_task_state,
                     new_vm_state=new_vm_state, new_task_state=new_task_state,
-                    service=service, host=host)
+                    service=service, host=host, progress=progress)
         except Exception:
             LOG.exception(_("Failed to send state update notification"),
                     instance=instance)
@@ -159,7 +159,7 @@ def send_update_with_states(context, instance, old_vm_state, new_vm_state,
 
 def _send_instance_update_notification(context, instance, old_vm_state=None,
             old_task_state=None, new_vm_state=None, new_task_state=None,
-            service="compute", host=None, old_display_name=None):
+            service="compute", host=None, old_display_name=None, progress=None):
     """Send 'compute.instance.update' notification to inform observers
     about instance state changes.
     """
@@ -176,6 +176,7 @@ def _send_instance_update_notification(context, instance, old_vm_state=None,
         "state": new_vm_state,
         "old_task_state": old_task_state,
         "new_task_state": new_task_state,
+        "progress": progress
     }
 
     payload.update(states_payload)
