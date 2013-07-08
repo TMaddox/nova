@@ -111,7 +111,7 @@ class ConductorManager(manager.Manager):
                                   exception.UnexpectedTaskStateError)
     def instance_update(self, context, instance_uuid,
                         updates, service=None):
-        print "TEM: %s" updates.get('progress', "NONEWHATSOEVER")
+        print "TEM: %s" % updates.get('progress', "NONEWHATSOEVER")
         for key, value in updates.iteritems():
             if key not in allowed_updates:
                 LOG.error(_("Instance update attempted for "
