@@ -74,8 +74,6 @@ def send_update(context, old_instance, new_instance, service=None, host=None, pr
     """Send compute.instance.update notification to report any changes occurred
     in that instance
     """
-    LOG.info("TEM-progress-send_update")
-    LOG.info("progress: %s" % progress)
     if not CONF.notify_on_any_change and not CONF.notify_on_state_change:
         # skip all this if updates are disabled
         return
@@ -124,8 +122,6 @@ def send_update_with_states(context, instance, old_vm_state, new_vm_state,
     """Send compute.instance.update notification to report changes if there
     are any, in the instance
     """
-    LOG.info("TEM-progress-send_updates_with_states")
-    LOG.info("progress: %s" % progress)
     if not CONF.notify_on_state_change:
         # skip all this if updates are disabled
         return
@@ -165,8 +161,6 @@ def _send_instance_update_notification(context, instance, old_vm_state=None,
     """Send 'compute.instance.update' notification to inform observers
     about instance state changes.
     """
-    LOG.info("TEM-progress-_send_instance_update_notification")
-    LOG.info("progress: %s" % progress)
     payload = info_from_instance(context, instance, None, None)
 
     if not new_vm_state:
