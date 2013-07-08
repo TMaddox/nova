@@ -111,6 +111,7 @@ class ConductorManager(manager.Manager):
                                   exception.UnexpectedTaskStateError)
     def instance_update(self, context, instance_uuid,
                         updates, service=None):
+        print updates
         for key, value in updates.iteritems():
             if key not in allowed_updates:
                 LOG.error(_("Instance update attempted for "
@@ -121,7 +122,7 @@ class ConductorManager(manager.Manager):
 
         old_ref, instance_ref = self.db.instance_update_and_get_original(
             context, instance_uuid, updates)
-        notifications.send_update(context, old_ref, instance_ref, service, progress=progress)
+        notifications.send_update(context, old_ref, instance_ref, service)
         return jsonutils.to_primitive(instance_ref)
 
     @rpc_common.client_exceptions(exception.InstanceNotFound)
