@@ -36,7 +36,7 @@ LOG = logging.getLogger(__name__)
 configdrive_opts = [
     cfg.StrOpt('config_drive_format',
                default='iso9660',
-               choices=('iso9660', 'vfat'),
+               choices=('iso9660', 'vfat', 'fs'),
                help='Config drive format.'),
     # force_config_drive is a string option, to allow for future behaviors
     #  (e.g. use config_drive based on image properties)
@@ -96,6 +96,10 @@ class ConfigDriveBuilder(object):
     def _write_md_files(self, basedir):
         for data in self.mdfiles:
             self._add_file(basedir, data[0], data[1])
+
+    def _make_fs(self, path, tmpdir):
+        shutil.copytree(tmpdir, path)
+        os.chmod(path, 0o755)
 
     def _make_iso9660(self, path, tmpdir):
         publisher = "%(product)s %(version)s" % {
@@ -166,6 +170,8 @@ class ConfigDriveBuilder(object):
                 self._make_iso9660(path, tmpdir)
             elif CONF.config_drive_format == 'vfat':
                 self._make_vfat(path, tmpdir)
+            elif CONF.config_drive_format == 'fs':
+                self._make_fs(path, tmpdir)
             else:
                 raise exception.ConfigDriveUnknownFormat(
                     format=CONF.config_drive_format)

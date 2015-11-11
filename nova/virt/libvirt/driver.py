@@ -4439,6 +4439,18 @@ class LibvirtDriver(driver.ComputeDriver):
             # Save rootfs device to disconnect it when deleting the instance
             if rootfs_dev:
                 instance.system_metadata['rootfs_device_name'] = rootfs_dev
+
+            source_dir = self._get_disk_config_path(instance)
+            if (os.path.exists(source_dir) and
+                    configdrive.required_by(instance)):
+                inst_path = libvirt_utils.get_instance_path(instance)
+                container_dir = os.path.join(inst_path, 'rootfs')
+                parent_dir = os.path.join(container_dir, 'var/lib/cloud/seed')
+                utils.execute('mkdir', '-p', parent_dir, run_as_root=True)
+
+                target_dir = os.path.join(parent_dir, 'config_drive')
+                utils.execute('mv', source_dir, target_dir, run_as_root=True)
+
             if CONF.libvirt.uid_maps or CONF.libvirt.gid_maps:
                 id_maps = self._get_guest_idmaps()
                 libvirt_utils.chown_for_id_maps(container_dir, id_maps)

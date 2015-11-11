@@ -359,6 +359,8 @@ def get_config_drive_type():
         config_drive_type = 'cdrom'
     elif CONF.config_drive_format == 'vfat':
         config_drive_type = 'disk'
+    elif CONF.config_drive_format == 'fs':
+        config_drive_type = 'fs'
     else:
         raise exception.ConfigDriveUnknownFormat(
             format=CONF.config_drive_format)
